@@ -1,4 +1,4 @@
-﻿-- Global Vars
+-- Global Vars
 
 VERSION = "BC2.0.7";
 AddonNamePlain = "%sEasyDestroy%s %sFixed%s";
@@ -199,6 +199,8 @@ function EasyDestroy_Cmd(msg)
 		elseif ( cmd == 'keyboard' ) then
 			EasyDestroy_Options.KeyBoardShortcuts = (not EasyDestroy_Options.KeyBoardShortcuts);
 			Print("|cffffffff["..AddonName.."] |cff00ff00Keyboard Shortcuts: "..tostring(EasyDestroy_Options.KeyBoardShortcuts).."|r.|r");
+		elseif cmd == "options" then
+			EasyDestroyOptions_Show()
 		elseif ( sub ) then
 			EasyDestroy_AddRemove(sub, cmd);
 		else
@@ -211,6 +213,7 @@ function EasyDestroy_Cmd(msg)
 			Print("|cffffffff"..SLASH_LOST_CHAT1.." add [item link]: Add an item to the safe list (use Shift-Click or type the item's name).|r");
 			Print("|cffffffff"..SLASH_LOST_CHAT1.." remove [item link]: Remove an item from the safe list (use Shift-Click or type the item's name).|r");
 			Print("|cffffffff"..SLASH_LOST_CHAT1.." keyboard: Toggle Keyboard Shortcuts on/off.|r");
+			Print("|cffffffff"..SLASH_LOST_CHAT1.." options: Show the options frame.|r");
 			Print("|cffffffffKeyboard Shortcuts (pick up an item and the do the shortcut)|r");
 			Print("|cffffffff[DELETE] Delete the item in hand.|r");
 			Print("|cffffffff[CTRL-S] Add the item to the safe list.|r");
