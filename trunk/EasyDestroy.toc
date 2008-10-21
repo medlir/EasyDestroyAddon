@@ -4,6 +4,5 @@
 ## OptionalDeps: myAddOns
 ## SavedVariables: EasyDestroy_Options, EasyDestroy_Safe
 ## LoadOnDemand: 0
-## RequiredDeps: EGLoader
 
 EasyDestroy.xml
