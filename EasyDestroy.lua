@@ -457,7 +457,7 @@ function EasyDestroy_OptionsCheckButtonOnClick2()
 	end
 end
 
-function EasyDestroy_OptionsCheckButtonOnClick2()
+function EasyDestroy_OptionsCheckButtonOnClick3()
 	if(EasyDestroy_Options.KeyBoardShortcuts == true) then
 		EasyDestroy_Options.KeyBoardShortcuts = false;
 	else
