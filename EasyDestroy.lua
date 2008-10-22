@@ -1,4 +1,4 @@
--- Global Vars
+﻿-- Global Vars
 
 VERSION = "BC2.0.7";
 AddonNamePlain = "%sEasyDestroy%s %sFixed%s";
@@ -200,7 +200,7 @@ function EasyDestroy_Cmd(msg)
 			EasyDestroy_Options.KeyBoardShortcuts = (not EasyDestroy_Options.KeyBoardShortcuts);
 			Print("|cffffffff["..AddonName.."] |cff00ff00Keyboard Shortcuts: "..tostring(EasyDestroy_Options.KeyBoardShortcuts).."|r.|r");
 		elseif cmd == "options" then
-			EasyDestroyOptions_Show()
+			EasyDestroyOptions_Toggle()
 		elseif ( sub ) then
 			EasyDestroy_AddRemove(sub, cmd);
 		else
@@ -270,11 +270,11 @@ function EasyDestroy_AddRemove(sub, cmd)
 end
 
 Old_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick;
-function ContainerFrameItemButton_OnModifiedClick(button)
+function ContainerFrameItemButton_OnModifiedClick(self, button)
 	if ( button == "LeftButton" ) then
-		Old_ContainerFrameItemButton_OnModifiedClick(button);
+		Old_ContainerFrameItemButton_OnModifiedClick(self, button);
 	elseif ( button == "RightButton" ) then
-		EasyDestroy_DestroyItem(this:GetParent():GetID(), this:GetID());
+		EasyDestroy_DestroyItem(self:GetParent():GetID(), self:GetID());
 	end
 end
 
@@ -403,23 +403,33 @@ end
 function EasyDestroyOptions_Show()
 	local str = getglobal("EasyDestroyOptionsFrame_CheckButton1Text");
 	str:SetText("Enable EasyDestroy");
-	local button1 = getglobal("EasyDestroyOptionsFrame_CheckButton1");
+	local button = getglobal("EasyDestroyOptionsFrame_CheckButton1");
 	if (EasyDestroy_Options.On) then
 		checked = 1;
 	else
 		checked = 0;
 	end
-	button1:SetChecked(checked);
+	button:SetChecked(checked);
 
-	local str = getglobal("EasyDestroyOptionsFrame_CheckButton2Text");
+	str = getglobal("EasyDestroyOptionsFrame_CheckButton2Text");
 	str:SetText("Announce Destroy");
-	local button2 = getglobal("EasyDestroyOptionsFrame_CheckButton2");
+	button = getglobal("EasyDestroyOptionsFrame_CheckButton2");
 	if (EasyDestroy_Options.Notify) then
 		checked = 1;
 	else
 		checked = 0;
 	end
-	button2:SetChecked(checked);
+	button:SetChecked(checked);
+
+	str = getglobal("EasyDestroyOptionsFrame_CheckButton3Text");
+	str:SetText("Keyboard Shortcuts");
+	button = getglobal("EasyDestroyOptionsFrame_CheckButton3");
+	if (EasyDestroy_Options.KeyBoardShortcuts) then
+		checked = 1;
+	else
+		checked = 0;
+	end
+	button:SetChecked(checked);
 end
 
 function EasyDestroyOptions_Hide()
@@ -446,6 +456,15 @@ function EasyDestroy_OptionsCheckButtonOnClick2()
 		EasyDestroy_Options.Notify = true;
 	end
 end
+
+function EasyDestroy_OptionsCheckButtonOnClick2()
+	if(EasyDestroy_Options.KeyBoardShortcuts == true) then
+		EasyDestroy_Options.KeyBoardShortcuts = false;
+	else
+		EasyDestroy_Options.KeyBoardShortcuts = true;
+	end
+end
+
 -- Function to change quality integers into text for display in warning
 function EasyDestroy_GetQualityText(quality)
 	if ( quality == 0 ) then

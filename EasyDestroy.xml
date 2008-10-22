@@ -1,4 +1,4 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <Script file="EasyDestroy.lua" />
 
@@ -13,6 +13,10 @@
 				EasyDestroy_OnEvent(event);
 			</OnEvent>
 			<OnKeyDown>
+				if arg1 == "ESCAPE" and EasyDestroy_Debug then
+					this:EnableKeyboard(false)
+					EasyDestroy_Debug = false
+				end
 				-- Delete the item in hand
 				if arg1 == 'DELETE' then
 					EasyDestroy_DeleteCursorItem();
@@ -66,6 +70,7 @@
 				else
 					PlaySound("igMainMenuOptionCheckBoxOn");
 				end
+				EasyDestroy_OptionsCheckButtonOnClick1()
 			</OnClick>
 			<OnEnter>
 				if ( this.tooltipText ) then
@@ -104,10 +109,35 @@
 			</OnLeave>
 		</Scripts>
 	</CheckButton>
+	<CheckButton name="EasyDestroyCheckTemplate3" inherits="UICheckButtonTemplate" virtual="true">
+		<HitRectInsets>
+			<AbsInset left="0" right="-100" top="0" bottom="0"/>
+		</HitRectInsets>
+		<Scripts>
+			<OnClick>
+				if ( this:GetChecked() ) then
+					PlaySound("igMainMenuOptionCheckBoxOff");
+				else
+					PlaySound("igMainMenuOptionCheckBoxOn");
+				end
+				EasyDestroy_OptionsCheckButtonOnClick3();
+			</OnClick>
+			<OnEnter>
+				if ( this.tooltipText ) then
+					GameTooltip:SetOwner(this, "ANCHOR_LEFT");
+					GameTooltip:SetBackdropColor(0.0, 0.0, 0.0);
+					GameTooltip:SetText(this.tooltipText, 1.0, 1.0, 1.0);
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</CheckButton>
     
     <Frame name="EasyDestroyOptions" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" hidden="true" parent="UIParent">
         <Size>
-			<AbsDimension x="225" y="150" />
+			<AbsDimension x="225" y="200" />
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER" />
@@ -174,7 +204,16 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-
+			<CheckButton name="EasyDestroyOptionsFrame_CheckButton3" inherits="EasyDestroyCheckTemplate3">
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
+						<Offset>
+							<AbsDimension x="-40" y="-110" />
+						</Offset>
+					</Anchor>
+				</Anchors>
+			</CheckButton>
+			<!-- ?? -->
 			<Frame name="EasyDestroyOptionsFrame1" inherits="EasyDestroyColorOptionTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
