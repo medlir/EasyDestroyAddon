@@ -1,4 +1,4 @@
-﻿<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
     <Script file="EasyDestroy.lua" />
 
@@ -14,7 +14,7 @@
 			</OnEvent>
 			<OnKeyDown>
 				if arg1 == "ESCAPE" and EasyDestroy_Debug then
-					this:EnableKeyboard(false)
+					self:EnableKeyboard(false)
 					EasyDestroy_Debug = false
 				end
 				-- Delete the item in hand
@@ -46,87 +46,30 @@
 			</OnKeyDown>
 			<OnUpdate>
 				if CursorHasItem() and EasyDestroy_Options.KeyBoardShortcuts then
-					this:EnableKeyboard(true);
+					self:EnableKeyboard(true);
 				else
 					if EasyDestroy_Debug then
 						-- Enable the keyboard in debug mode regardless
-						this:EnableKeyboard(true);
+						self:EnableKeyboard(true);
 					else
-						this:EnableKeyboard(false);
+						self:EnableKeyboard(false);
 					end
 				end
 			</OnUpdate>
 		</Scripts>
     </Frame>
     
-    <CheckButton name="EasyDestroyCheckTemplate1" inherits="UICheckButtonTemplate" virtual="true">
+    <CheckButton name="EasyDestroyCheckTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<HitRectInsets>
 			<AbsInset left="0" right="-100" top="0" bottom="0"/>
 		</HitRectInsets>
 		<Scripts>
-			<OnClick>
-				if ( this:GetChecked() ) then
-					PlaySound("igMainMenuOptionCheckBoxOff");
-				else
-					PlaySound("igMainMenuOptionCheckBoxOn");
-				end
-				EasyDestroy_OptionsCheckButtonOnClick1()
-			</OnClick>
+			<OnClick function="EasyDestroy_OptionsCheckButtonOnClick" />
 			<OnEnter>
-				if ( this.tooltipText ) then
-					GameTooltip:SetOwner(this, "ANCHOR_LEFT");
+				if ( self.tooltipText ) then
+					GameTooltip:SetOwner(self, "ANCHOR_LEFT");
 					GameTooltip:SetBackdropColor(0.0, 0.0, 0.0);
-					GameTooltip:SetText(this.tooltipText, 1.0, 1.0, 1.0);
-				end
-			</OnEnter>
-			<OnLeave>
-				GameTooltip:Hide();
-			</OnLeave>
-		</Scripts>
-	</CheckButton>
-	<CheckButton name="EasyDestroyCheckTemplate2" inherits="UICheckButtonTemplate" virtual="true">
-		<HitRectInsets>
-			<AbsInset left="0" right="-100" top="0" bottom="0"/>
-		</HitRectInsets>
-		<Scripts>
-			<OnClick>
-				if ( this:GetChecked() ) then
-					PlaySound("igMainMenuOptionCheckBoxOff");
-				else
-					PlaySound("igMainMenuOptionCheckBoxOn");
-				end
-				EasyDestroy_OptionsCheckButtonOnClick2();
-			</OnClick>
-			<OnEnter>
-				if ( this.tooltipText ) then
-					GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-					GameTooltip:SetBackdropColor(0.0, 0.0, 0.0);
-					GameTooltip:SetText(this.tooltipText, 1.0, 1.0, 1.0);
-				end
-			</OnEnter>
-			<OnLeave>
-				GameTooltip:Hide();
-			</OnLeave>
-		</Scripts>
-	</CheckButton>
-	<CheckButton name="EasyDestroyCheckTemplate3" inherits="UICheckButtonTemplate" virtual="true">
-		<HitRectInsets>
-			<AbsInset left="0" right="-100" top="0" bottom="0"/>
-		</HitRectInsets>
-		<Scripts>
-			<OnClick>
-				if ( this:GetChecked() ) then
-					PlaySound("igMainMenuOptionCheckBoxOff");
-				else
-					PlaySound("igMainMenuOptionCheckBoxOn");
-				end
-				EasyDestroy_OptionsCheckButtonOnClick3();
-			</OnClick>
-			<OnEnter>
-				if ( this.tooltipText ) then
-					GameTooltip:SetOwner(this, "ANCHOR_LEFT");
-					GameTooltip:SetBackdropColor(0.0, 0.0, 0.0);
-					GameTooltip:SetText(this.tooltipText, 1.0, 1.0, 1.0);
+					GameTooltip:SetText(self.tooltipText, 1.0, 1.0, 1.0);
 				end
 			</OnEnter>
 			<OnLeave>
@@ -142,8 +85,7 @@
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border"
-			tile="true">
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
 			<BackgroundInsets>
 				<AbsInset left="11" right="12" top="12" bottom="11" />	
 				<Size>
@@ -157,7 +99,6 @@
 				<AbsValue val="32" />
 			</EdgeSize>
 		</Backdrop>
-        
         <Layers>
 			<Layer level="ARTWORK">
 				<Texture name="EasyDestroyOptionsFrameTitle" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -185,8 +126,7 @@
 		</Layers>
         
         <Frames>
-			
-			<CheckButton name="EasyDestroyOptionsFrame_CheckButton1" inherits="EasyDestroyCheckTemplate1">
+			<CheckButton name="EasyDestroyOptionsFrame_CheckButton1" inherits="EasyDestroyCheckTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
 						<Offset>
@@ -195,7 +135,7 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="EasyDestroyOptionsFrame_CheckButton2" inherits="EasyDestroyCheckTemplate2">
+			<CheckButton name="EasyDestroyOptionsFrame_CheckButton2" inherits="EasyDestroyCheckTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
 						<Offset>
@@ -204,7 +144,7 @@
 					</Anchor>
 				</Anchors>
 			</CheckButton>
-			<CheckButton name="EasyDestroyOptionsFrame_CheckButton3" inherits="EasyDestroyCheckTemplate3">
+			<CheckButton name="EasyDestroyOptionsFrame_CheckButton3" inherits="EasyDestroyCheckTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
 						<Offset>
@@ -214,7 +154,7 @@
 				</Anchors>
 			</CheckButton>
 			<!-- ?? -->
-			<Frame name="EasyDestroyOptionsFrame1" inherits="EasyDestroyColorOptionTemplate">
+			<Frame name="EasyDestroyOptionsFrame">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
 						<Offset>
@@ -235,7 +175,7 @@
 				<Scripts>
 					<OnClick>
 						PlaySound("gsTitleOptionOK");
-						EasyDestroyOptions_Hide();
+						EasyDestroyOptions_Hide(self);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -251,7 +191,7 @@
 				<Scripts>
 					<OnClick>
 						PlaySound("igMainMenuOptionCheckBoxOn");
-						EasyDestroyOptions_Defaults();
+						EasyDestroyOptions_Defaults(self);
 					</OnClick>
 				</Scripts>
 			</Button>
