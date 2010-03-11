@@ -1,4 +1,4 @@
-## Interface: 30200
+## Interface: 30300
 ## Title: |cffff0088EBG|r EasyDestroy
 ## Notes: Hold Alt-Shift and right-click an item to destroy it.
 ## OptionalDeps: myAddOns

@@ -1,4 +1,4 @@
-﻿-- Global Vars
+-- Global Vars
 
 VERSION = "BC2.0.7";
 AddonNamePlain = "%sEasyDestroy%s %sFixed%s";
@@ -441,7 +441,16 @@ function EasyDestroyOptions_Defaults()
 	EasyDestroy_Options.Notify = true;
 end
 
-function EasyDestroy_OptionsCheckButtonOnClick1()
+local function clicky(self)
+	if ( self:GetChecked() ) then
+		PlaySound("igMainMenuOptionCheckBoxOff");
+	else
+		PlaySound("igMainMenuOptionCheckBoxOn");
+	end
+end
+
+function EasyDestroyOptionsFrame_CheckButton1_OnClick(self)
+	clicky(self)
 	if(EasyDestroy_Options.On == true) then
 		EasyDestroy_Options.On = false;
 	else
@@ -449,7 +458,8 @@ function EasyDestroy_OptionsCheckButtonOnClick1()
 	end
 end
 
-function EasyDestroy_OptionsCheckButtonOnClick2()
+function EasyDestroyOptionsFrame_CheckButton2_OnClick(self)
+	clicky(self)
 	if(EasyDestroy_Options.Notify == true) then
 		EasyDestroy_Options.Notify = false;
 	else
@@ -457,12 +467,17 @@ function EasyDestroy_OptionsCheckButtonOnClick2()
 	end
 end
 
-function EasyDestroy_OptionsCheckButtonOnClick3()
+function EasyDestroyOptionsFrame_CheckButton3_OnClick(self)
+	clicky(self)
 	if(EasyDestroy_Options.KeyBoardShortcuts == true) then
 		EasyDestroy_Options.KeyBoardShortcuts = false;
 	else
 		EasyDestroy_Options.KeyBoardShortcuts = true;
 	end
+end
+
+function EasyDestroy_OptionsCheckButtonOnClick(self)
+	_G[self:GetName().."_OnClick"](self)
 end
 
 -- Function to change quality integers into text for display in warning
