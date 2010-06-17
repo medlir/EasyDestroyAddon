@@ -1,13 +1,14 @@
+local aname = ...
 -- Global Vars
 
 VERSION = "BC2.0.7";
-AddonNamePlain = "%sEasyDestroy%s %sFixed%s";
+AddonNamePlain = "%s" .. aname .. "%s %sFixed%s";
 AddonName = string.format(AddonNamePlain, "|cffff00ff", "|r", "|cffff0000", "|r");
 
 -- Binding Vars
 BINDING_HEADER_ED				= string.format(AddonNamePlain, "", "", "", "");
 BINDING_NAME_OPTIONS			= "Easy Destroy Options Frame";
-BINDING_NAME_TOGGLE				= "Enable or Disable EasyDestroy";
+BINDING_NAME_TOGGLE				= "Enable or Disable " .. aname;
 BINDING_NAME_NOTIFY				= "Enable or Disable Notifications";
 BINDING_NAME_CURSOR				= "Destroy what you just picked up";
 BINDING_NAME_EDCONVERT = "Manually convert the old safe list";
@@ -17,10 +18,10 @@ QUALITY_FLOOR = 2;
 
 -- For items of quality >= QUALITY_FLOOR (Green, Blue, Purple) we want to confirm that they
 -- want to delete the item.	They can repeat the procedure to delete it.
-LAST_ITEM_BAG	= nil;
+LAST_ITEM_BAG = nil;
 LAST_ITEM_SLOT = nil;
 LAST_ITEM_LINK = nil;
-LAST_CONFIRM	 = 0;
+LAST_CONFIRM = 0;
 
 EasyDestroy_Options = { 
 	Notify = false;
@@ -60,7 +61,7 @@ function EasyDestroy_ChangeQualityFloor(key)
 end
 
 -- OnLoad functions, set up Print, logon spam (:p), hooking and register events
-function EasyDestroy_OnLoad()
+function EasyDestroy_OnLoad(self)
 	-- Make sure we have non-nil options
 	if EasyDestroy_Options.Notify == nil then
 		EasyDestroy_Options.Notify = false;
@@ -98,10 +99,10 @@ function EasyDestroy_OnLoad()
 
 	Print("|cffffffff["..AddonName.."] v" .. VERSION .. " loaded.|r");
 	
-	UIPanelWindows["EasyDestroyOptions"] = {area = "center", pushable = 0};
+	UIPanelWindows[aname .. "Options"] = {area = "center", pushable = 0};
 
 	-- Events
-	this:RegisterEvent("VARIABLES_LOADED");
+	self:RegisterEvent("VARIABLES_LOADED");
 	
 	-- Slash Command Handler (added by Whizzbang)
 	SlashCmdList["EASYD"] = EasyDestroy_Cmd;
@@ -113,15 +114,20 @@ end
 function EasyDestroy_OnEvent(event)
 	if ( event == "VARIABLES_LOADED" ) then
 		-- myAddOns support
+		EasyDestroyOptions.name = EasyDestroyOptions:GetName()
+		InterfaceOptions_AddCategory(EasyDestroyOptions)
+		EasyDestroyOptions:SetScript("OnHide", function(self)
+			self:SetParent(UIParent)
+		end)
 		if ( myAddOnsFrame ) then
 			myAddOnsList.EasyDestroy = {
-				name = "EasyDestroySafe",
+				name = aname .. "Safe",
 				releaseDate = "October 20, 2005",
 				author = "tsigo, Wilz, Whizzbang",
 				description = "Quickly and easily destroy items.",
 				version = VERSION,
 				category = MYADDONS_CATEGORY_INVENTORY,
-				optionsframe = "EasyDestroyOptions",
+				optionsframe = aname .. "Options",
 			};
 		end
 		if (not EasyDestroy_Options["Converted"]) then
@@ -432,8 +438,10 @@ function EasyDestroyOptions_Show()
 	button:SetChecked(checked);
 end
 
-function EasyDestroyOptions_Hide()
-	EasyDestroyOptions:Hide();
+function EasyDestroyOptions_Hide(self)
+	if self:GetParent():GetParent() == UIParent then
+		self:GetParent():Hide();
+	end
 end
 
 function EasyDestroyOptions_Defaults()
