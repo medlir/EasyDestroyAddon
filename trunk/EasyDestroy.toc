@@ -4,5 +4,6 @@
 ## OptionalDeps: myAddOns
 ## SavedVariables: EasyDestroy_Options, EasyDestroy_Safe
 ## Version: @project-version@
+## Author: egingell
 
 EasyDestroy.xml

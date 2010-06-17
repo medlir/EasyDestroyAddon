@@ -1,13 +1,13 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
-    <Script file="EasyDestroy.lua" />
+	<Script file="EasyDestroy.lua" />
 
-    <Frame name="EasyDestroy" parent="UIParent" hidden="false">
+	<Frame name="EasyDestroy" hidden="false">
 		<Scripts>
 			<OnLoad>
 				-- Disables the DeleteCursorItem() call for testing when true
 				EasyDestroy_Debug = false;
-				EasyDestroy_OnLoad();
+				EasyDestroy_OnLoad(self);
 			</OnLoad>
 			<OnEvent>
 				EasyDestroy_OnEvent(event);
@@ -57,9 +57,9 @@
 				end
 			</OnUpdate>
 		</Scripts>
-    </Frame>
-    
-    <CheckButton name="EasyDestroyCheckTemplate" inherits="UICheckButtonTemplate" virtual="true">
+	</Frame>
+	
+	<CheckButton name="EasyDestroyCheckTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<HitRectInsets>
 			<AbsInset left="0" right="-100" top="0" bottom="0"/>
 		</HitRectInsets>
@@ -77,9 +77,9 @@
 			</OnLeave>
 		</Scripts>
 	</CheckButton>
-    
-    <Frame name="EasyDestroyOptions" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" hidden="true" parent="UIParent">
-        <Size>
+	
+	<Frame name="EasyDestroyOptions" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" hidden="true" parent="UIParent">
+		<Size>
 			<AbsDimension x="225" y="200" />
 		</Size>
 		<Anchors>
@@ -99,7 +99,7 @@
 				<AbsValue val="32" />
 			</EdgeSize>
 		</Backdrop>
-        <Layers>
+		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="EasyDestroyOptionsFrameTitle" file="Interface\DialogFrame\UI-DialogBox-Header">
 					<Size>
@@ -124,8 +124,8 @@
 				</FontString>
 			</Layer>
 		</Layers>
-        
-        <Frames>
+		
+		<Frames>
 			<CheckButton name="EasyDestroyOptionsFrame_CheckButton1" inherits="EasyDestroyCheckTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="TOP" relativeTo="EasyDestroyOptions">
@@ -197,9 +197,9 @@
 			</Button>
 			
 		</Frames>
-        <Scripts>
+		<Scripts>
 			<OnShow>
-				EasyDestroyOptions_Show();
+				EasyDestroyOptions_Show(self);
 			</OnShow>
 			<OnLoad>
 				<!--RangeRecolorAction_OnLoad();-->
@@ -208,5 +208,5 @@
 				<!--RangeRecolorAction_OnEvent(event);-->
 			</OnEvent>
 		</Scripts>	
-    </Frame>
+	</Frame>
 </Ui>
