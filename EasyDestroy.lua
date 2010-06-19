@@ -275,12 +275,12 @@ function EasyDestroy_AddRemove(sub, cmd)
 	end
 end
 
-Old_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick;
+local Old_ContainerFrameItemButton_OnModifiedClick = ContainerFrameItemButton_OnModifiedClick;
 function ContainerFrameItemButton_OnModifiedClick(self, button)
-	if ( button == "LeftButton" ) then
-		Old_ContainerFrameItemButton_OnModifiedClick(self, button);
-	elseif ( button == "RightButton" ) then
+	if ( button == "RightButton" and EasyDestroy_Options.On and IsAltKeyDown() and IsShiftKeyDown() and not IsControlKeyDown() ) then
 		EasyDestroy_DestroyItem(self:GetParent():GetID(), self:GetID());
+	else
+		Old_ContainerFrameItemButton_OnModifiedClick(self, button);
 	end
 end
 
