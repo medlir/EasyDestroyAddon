@@ -360,6 +360,9 @@ function EasyDestroy_DestroyItem(bag, slot)
 		local itemLink = GetContainerItemLink(bag, slot);
 	
 		-- Normalize the itemName.
+		if not itemLink then
+			return
+		end
 		local itemName, _, quality = GetItemInfo(itemLink);
 		local qualityText = EasyDestroy_GetQualityText(quality);
 	
