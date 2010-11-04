@@ -12,38 +12,7 @@
 			<OnEvent>
 				EasyDestroy_OnEvent(event);
 			</OnEvent>
-			<OnKeyDown>
-				if arg1 == "ESCAPE" and EasyDestroy_Debug then
-					self:EnableKeyboard(false)
-					EasyDestroy_Debug = false
-				end
-				-- Delete the item in hand
-				if arg1 == 'DELETE' then
-					EasyDestroy_DeleteCursorItem();
-				end
-				
-				-- Change the rarity threashold
-				if EasyDestroy_Debug and (arg1 == 'UP' or arg1 == 'DOWN') then
-					EasyDestroy_ChangeQualityFloor(arg1);
-				end
-				
-				if IsControlKeyDown() then
-					-- Save the item to the safe list
-					local _, _, itemLink = GetCursorInfo();
-					if arg1 == 'S' then
-						EasyDestroy_AddRemove(itemLink, 'add');
-						ClearCursor();
-					elseif arg1 == 'R' then
-						EasyDestroy_AddRemove(itemLink, 'remove');
-						ClearCursor();
-					end
-				end
-								
-				-- Tell me what key I pressed
-				if EasyDestroy_Debug then
-					ChatFrame1:AddMessage('[EasyDestroy] Key Pressed: '..arg1);
-				end
-			</OnKeyDown>
+			<OnKeyDown function="EasyDestroy_OnKeyDown"/>
 			<OnUpdate>
 				if CursorHasItem() and EasyDestroy_Options.KeyBoardShortcuts then
 					self:EnableKeyboard(true);
@@ -201,12 +170,6 @@
 			<OnShow>
 				EasyDestroyOptions_Show(self);
 			</OnShow>
-			<OnLoad>
-				<!--RangeRecolorAction_OnLoad();-->
-			</OnLoad>
-			<OnEvent>
-				<!--RangeRecolorAction_OnEvent(event);-->
-			</OnEvent>
 		</Scripts>	
 	</Frame>
 </Ui>

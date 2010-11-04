@@ -338,14 +338,14 @@ function EasyDestroy_DeleteCursorItem()
 						Print("["..AddonName.."] DEBUG : ITEM WOULD'VE BEEN DELETED!!!");
 					end
 
-					-- It's really gone now.	Really.	No getting it back.
+					-- It's really gone now. Really.	No getting it back.
 					LAST_ITEM_LINK = nil;
 					LAST_ITEM_BAG	= nil;
 					LAST_ITEM_SLOT = nil;
 					LAST_CONFIRM	 = 0;
 	
 					if(EasyDestroy_Options.Notify) then
-							Print("|cffffffff["..AddonName.."] |cff0000ffDestroyed|r - " .. itemLink .. ".|r");
+						Print("|cffffffff["..AddonName.."] |cff0000ffDestroyed|r - " .. itemLink .. ".|r");
 					end
 				end
 			end
@@ -353,6 +353,39 @@ function EasyDestroy_DeleteCursorItem()
 	end
 end
 
+function EasyDestroy_OnKeyDown(self, ...)
+	local arg1 = ...
+	if arg1 == "ESCAPE" and EasyDestroy_Debug then
+		self:EnableKeyboard(false)
+		EasyDestroy_Debug = false
+	end
+	-- Delete the item in hand
+	if arg1 == 'DELETE' then
+		EasyDestroy_DeleteCursorItem();
+	end
+	
+	-- Change the rarity threashold
+	if EasyDestroy_Debug and (arg1 == 'UP' or arg1 == 'DOWN') then
+		EasyDestroy_ChangeQualityFloor(arg1);
+	end
+	
+	if IsControlKeyDown() then
+		-- Save the item to the safe list
+		local _, _, itemLink = GetCursorInfo();
+		if arg1 == 'S' then
+			EasyDestroy_AddRemove(itemLink, 'add');
+			ClearCursor();
+		elseif arg1 == 'R' then
+			EasyDestroy_AddRemove(itemLink, 'remove');
+			ClearCursor();
+		end
+	end
+					
+	-- Tell me what key I pressed
+	if EasyDestroy_Debug then
+		ChatFrame1:AddMessage('[EasyDestroy] Key Pressed: '..arg1);
+	end
+end
 -- Generic function to allow either hooked function to destroy an item at <bag>,<slot>. 
 function EasyDestroy_DestroyItem(bag, slot)		
 	if ( EasyDestroy_Options.On and IsAltKeyDown() and IsShiftKeyDown() ) then
