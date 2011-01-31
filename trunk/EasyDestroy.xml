@@ -1,33 +1,5 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-..\FrameXML\UI.xsd">
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
 	<Script file="EasyDestroy.lua" />
-
-	<Frame name="EasyDestroy" hidden="false">
-		<Scripts>
-			<OnLoad>
-				-- Disables the DeleteCursorItem() call for testing when true
-				EasyDestroy_Debug = false;
-				EasyDestroy_OnLoad(self);
-			</OnLoad>
-			<OnEvent>
-				EasyDestroy_OnEvent(event);
-			</OnEvent>
-			<OnKeyDown function="EasyDestroy_OnKeyDown"/>
-			<OnUpdate>
-				if CursorHasItem() and EasyDestroy_Options.KeyBoardShortcuts then
-					self:EnableKeyboard(true);
-				else
-					if EasyDestroy_Debug then
-						-- Enable the keyboard in debug mode regardless
-						self:EnableKeyboard(true);
-					else
-						self:EnableKeyboard(false);
-					end
-				end
-			</OnUpdate>
-		</Scripts>
-	</Frame>
-	
 	<CheckButton name="EasyDestroyCheckTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<HitRectInsets>
 			<AbsInset left="0" right="-100" top="0" bottom="0"/>

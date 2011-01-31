@@ -1,18 +1,33 @@
 local aname = ...
 -- Global Vars
-
-VERSION = "BC2.0.7";
+--[[
+	<Frame name="EasyDestroy" hidden="false">
+		<Scripts>
+			<OnLoad>
+				-- Disables the DeleteCursorItem() call for testing when true
+				EasyDestroy_Debug = false;
+				EasyDestroy_OnLoad(self);
+			</OnLoad>
+			<OnEvent function="EasyDestroy_OnEvent" />
+		</Scripts>
+	</Frame>
+	
+--]]
+local f = CreateFrame("Frame", "EasyDestroy")
+VERSION = GetAddOnMetadata(aname, "Version");
 AddonNamePlain = "%s" .. aname .. "%s %sFixed%s";
 AddonName = string.format(AddonNamePlain, "|cffff00ff", "|r", "|cffff0000", "|r");
 
 -- Binding Vars
-BINDING_HEADER_ED				= string.format(AddonNamePlain, "", "", "", "");
-BINDING_NAME_OPTIONS			= "Easy Destroy Options Frame";
-BINDING_NAME_TOGGLE				= "Enable or Disable " .. aname;
-BINDING_NAME_NOTIFY				= "Enable or Disable Notifications";
-BINDING_NAME_CURSOR				= "Destroy what you just picked up";
-BINDING_NAME_EDCONVERT = "Manually convert the old safe list";
-BINDING_NAME_EDSAFELIST = "Show the safe list in the chat window";
+BINDING_HEADER_ED						= string.format(AddonNamePlain, "", "", "", "");
+BINDING_NAME_EDOPTIONS				= "Easy Destroy Options Frame";
+BINDING_NAME_EDTOGGLE				= "Enable or Disable " .. aname;
+BINDING_NAME_EDNOTIFY				= "Enable or Disable Notifications";
+BINDING_NAME_EDCURSOR				= "Destroy what you just picked up";
+BINDING_NAME_EDCONVERT				= "Manually convert the old safe list";
+BINDING_NAME_EDSAFELIST				= "Show the safe list in the chat window";
+BINDING_NAME_EDSAFELISTADD			= "Add the cursor item to the save list";
+BINDING_NAME_EDSAFELISTREMOVE		= "Remove the cursor item from the save list";
 
 QUALITY_FLOOR = 2;
 
@@ -35,33 +50,11 @@ EasyDestroy_Safe = {
 };
 local aName, aVer = AddonName, VERSION;
 
--- Function used for debugging, the debugger can adjust the quality level to make sure
--- the script checks the rarity before destroying it. You must pick up an item first.
--- The up arrow increases by 1
--- The down arrow decreases by 1
--- The asterisk makes it equal to the curser item's quality
-function EasyDestroy_ChangeQualityFloor(key)
-	if key == 'UP' then
-		QUALITY_FLOOR = QUALITY_FLOOR + 1;
-	elseif key == 'DOWN' then
-		QUALITY_FLOOR = QUALITY_FLOOR - 1;
-	elseif key == 'NUMPADMULTIPLY' then
-		local _, _, itemLink = GetCursorInfo();
-		local _, _, quality = GetItemInfo(itemLink);
-		QUALITY_FLOOR = quality;
-	end
-	-- The highest is 7 and the lowest is 0.
-	if QUALITY_FLOOR > 7 then
-		QUALITY_FLOOR = 7;
-	end
-	if QUALITY_FLOOR < 0 then
-		QUALITY_FLOOR = 0;
-	end
-	Print("|cffffffff["..AddonName.."] QUALITY_FLOOR changed to " .. QUALITY_FLOOR .. ".|r");
-end
-
 -- OnLoad functions, set up Print, logon spam (:p), hooking and register events
 function EasyDestroy_OnLoad(self)
+	-- Disables the DeleteCursorItem() call for testing when true
+	EasyDestroy_Debug = false;
+
 	-- Make sure we have non-nil options
 	if EasyDestroy_Options.Notify == nil then
 		EasyDestroy_Options.Notify = false;
@@ -97,22 +90,60 @@ function EasyDestroy_OnLoad(self)
 		end
 	end
 
-	Print("|cffffffff["..AddonName.."] v" .. VERSION .. " loaded.|r");
+	Print("|cffffffff["..AddonName.."] " .. VERSION .. " loaded.|r");
 	
 	UIPanelWindows[aname .. "Options"] = {area = "center", pushable = 0};
 
 	-- Events
 	self:RegisterEvent("VARIABLES_LOADED");
+	self:RegisterEvent("PLAYER_ENTERING_WORLD");
 	
 	-- Slash Command Handler (added by Whizzbang)
 	SlashCmdList["EASYD"] = EasyDestroy_Cmd;
-	SLASH_LOST_CHAT1 = "/easydestory";
 	SLASH_EASYD1 = "/ed";
+	SLASH_EASYD2 = "/easydestory";
+end
+
+local function IsKeyAlreadyBound_helper(key, command, ...)
+	for i = 1, select("#", ...) do
+		if select(i, ...) == key then
+			return true
+		end
+	end
+end
+
+local function IsKeyAlreadyBound(key)
+	for i = 1, GetNumBindings() do
+		if IsKeyAlreadyBound_helper(key, GetBinding(i)) then
+			return true
+		end
+	end
 end
 
 -- OnEvent functions, mainly to add myAddOns support
-function EasyDestroy_OnEvent(event)
-	if ( event == "VARIABLES_LOADED" ) then
+f:SetScript("OnEvent", function(self, event, ...)
+	if event == "PLAYER_ENTERING_WORLD" then
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+		LoadAddOn("Blizzard_BindingUI")
+		-- import the old bindings
+		local key = (GetBindingKey("EDCURSOR")) or (GetBindingKey("CURSOR")) or (not IsKeyAlreadyBound("DELETE") and "DELETE")
+		if key then
+			SetBinding(key, "EDCURSOR")
+		end
+		for binding in pairs{"TOGGLE", "NOTIFY"} do
+			local key = (GetBindingKey("ED" .. binding)) or (GetBindingKey(binding))
+			if key then
+				SetBinding(key, "ED" .. binding)
+			end
+		end
+		if not IsKeyAlreadyBound("CTRL-S") then
+			SetBinding("CTRL-S", "EDSAFELISTADD")
+		end
+		if not IsKeyAlreadyBound("CTRL-R") then
+			SetBinding("CTRL-R", "EDSAFELISTREMOVE")
+		end
+		SaveBindings(GetCurrentBindingSet() or 1)
+	elseif ( event == "VARIABLES_LOADED" ) then
 		-- myAddOns support
 		EasyDestroyOptions.name = EasyDestroyOptions:GetName()
 		InterfaceOptions_AddCategory(EasyDestroyOptions)
@@ -151,7 +182,7 @@ function EasyDestroy_OnEvent(event)
 			EasyDestroy_Options["Converted"] = true;
 		end
 	end
-end
+end)
 
 function EasyDestroy_GetCmd(msg)
 	if msg then
@@ -212,18 +243,27 @@ function EasyDestroy_Cmd(msg)
 		else
 			Print("|cffffffff["..AddonName.."]" .. " Usage:|r");
 			Print("|cffffffff"..SLASH_EASYD1..": Shortcut slash.|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." notify: |cff00ff00Enabled|r or |cffff0000Disabled|r notifications.|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." showoptions: Open the options menu.|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." toggle: |cff00ff00Enabled|r or |cffff0000Disabled|r "..AddonName..".|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." showsafe: Print safe list.|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." add [item link]: Add an item to the safe list (use Shift-Click or type the item's name).|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." remove [item link]: Remove an item from the safe list (use Shift-Click or type the item's name).|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." keyboard: Toggle Keyboard Shortcuts on/off.|r");
-			Print("|cffffffff"..SLASH_LOST_CHAT1.." options: Show the options frame.|r");
+			Print("|cffffffff"..SLASH_EASYD2.." notify: |cff00ff00Enabled|r or |cffff0000Disabled|r notifications.|r");
+			Print("|cffffffff"..SLASH_EASYD2.." showoptions: Open the options menu.|r");
+			Print("|cffffffff"..SLASH_EASYD2.." toggle: |cff00ff00Enabled|r or |cffff0000Disabled|r "..AddonName..".|r");
+			Print("|cffffffff"..SLASH_EASYD2.." showsafe: Print safe list.|r");
+			Print("|cffffffff"..SLASH_EASYD2.." add [item link]: Add an item to the safe list (use Shift-Click or type the item's name).|r");
+			Print("|cffffffff"..SLASH_EASYD2.." remove [item link]: Remove an item from the safe list (use Shift-Click or type the item's name).|r");
+			Print("|cffffffff"..SLASH_EASYD2.." keyboard: Toggle Keyboard Shortcuts on/off.|r");
+			Print("|cffffffff"..SLASH_EASYD2.." options: Show the options frame.|r");
 			Print("|cffffffffKeyboard Shortcuts (pick up an item and the do the shortcut)|r");
-			Print("|cffffffff[DELETE] Delete the item in hand.|r");
-			Print("|cffffffff[CTRL-S] Add the item to the safe list.|r");
-			Print("|cffffffff[CTRL-R] Remove the item from the safe list.|r");
+			local deleteKey = GetBindingKey("EDCURSOR")
+			local saveKey = GetBindingKey("EDSAFELISTADD")
+			local removeKey = GetBindingKey("EDSAFELISTREMOVE")
+			if deleteKey then
+				Print("|cffffffff[" .. deleteKey .. "] " .. BINDING_NAME_EDCURSOR .. ".|r");
+			end
+			if saveKey then
+				Print("|cffffffff[" .. saveKey .. "] " .. BINDING_NAME_EDSAFELISTADD .. ".|r");
+			end
+			if removeKey then
+				Print("|cffffffff[" .. removeKey .. "] " .. BINDING_NAME_EDSAFELISTREMOVE .. ".|r");
+			end
 		end
 	end
 end
@@ -248,10 +288,16 @@ function EasyDestroy_SafeList_Show()
 end
 
 function EasyDestroy_AddRemove(sub, cmd)
+	if sub == 'add' or sub == 'remove' then
+		local _, _, itemLink = GetCursorInfo();
+		cmd = sub
+		sub = itemLink
+	end
+
 	if (sub == nil) then
 		return false;
 	end
-
+	
 	local itemName, tempsub = GetItemInfo(sub);
 	if ( not itemName ) then
 		Print("|cffffffff["..AddonName.."] Could not find "..sub.."|r");
@@ -353,39 +399,6 @@ function EasyDestroy_DeleteCursorItem()
 	end
 end
 
-function EasyDestroy_OnKeyDown(self, ...)
-	local arg1 = ...
-	if arg1 == "ESCAPE" and EasyDestroy_Debug then
-		self:EnableKeyboard(false)
-		EasyDestroy_Debug = false
-	end
-	-- Delete the item in hand
-	if arg1 == 'DELETE' then
-		EasyDestroy_DeleteCursorItem();
-	end
-	
-	-- Change the rarity threashold
-	if EasyDestroy_Debug and (arg1 == 'UP' or arg1 == 'DOWN') then
-		EasyDestroy_ChangeQualityFloor(arg1);
-	end
-	
-	if IsControlKeyDown() then
-		-- Save the item to the safe list
-		local _, _, itemLink = GetCursorInfo();
-		if arg1 == 'S' then
-			EasyDestroy_AddRemove(itemLink, 'add');
-			ClearCursor();
-		elseif arg1 == 'R' then
-			EasyDestroy_AddRemove(itemLink, 'remove');
-			ClearCursor();
-		end
-	end
-					
-	-- Tell me what key I pressed
-	if EasyDestroy_Debug then
-		ChatFrame1:AddMessage('[EasyDestroy] Key Pressed: '..arg1);
-	end
-end
 -- Generic function to allow either hooked function to destroy an item at <bag>,<slot>. 
 function EasyDestroy_DestroyItem(bag, slot)		
 	if ( EasyDestroy_Options.On and IsAltKeyDown() and IsShiftKeyDown() ) then
@@ -443,9 +456,9 @@ function EasyDestroyOptions_Toggle()
 end
 
 function EasyDestroyOptions_Show()
-	local str = getglobal("EasyDestroyOptionsFrame_CheckButton1Text");
+	local str = EasyDestroyOptionsFrame_CheckButton1Text;
 	str:SetText("Enable EasyDestroy");
-	local button = getglobal("EasyDestroyOptionsFrame_CheckButton1");
+	local button = EasyDestroyOptionsFrame_CheckButton1;
 	if (EasyDestroy_Options.On) then
 		checked = 1;
 	else
@@ -453,9 +466,9 @@ function EasyDestroyOptions_Show()
 	end
 	button:SetChecked(checked);
 
-	str = getglobal("EasyDestroyOptionsFrame_CheckButton2Text");
+	str = EasyDestroyOptionsFrame_CheckButton2Text;
 	str:SetText("Announce Destroy");
-	button = getglobal("EasyDestroyOptionsFrame_CheckButton2");
+	button = EasyDestroyOptionsFrame_CheckButton2;
 	if (EasyDestroy_Options.Notify) then
 		checked = 1;
 	else
@@ -463,9 +476,9 @@ function EasyDestroyOptions_Show()
 	end
 	button:SetChecked(checked);
 
-	str = getglobal("EasyDestroyOptionsFrame_CheckButton3Text");
+	str = EasyDestroyOptionsFrame_CheckButton3Text;
 	str:SetText("Keyboard Shortcuts");
-	button = getglobal("EasyDestroyOptionsFrame_CheckButton3");
+	button = EasyDestroyOptionsFrame_CheckButton3;
 	if (EasyDestroy_Options.KeyBoardShortcuts) then
 		checked = 1;
 	else
@@ -544,3 +557,5 @@ function EasyDestroy_GetQualityText(quality)
 		return "Unknown";
 	end
 end
+
+EasyDestroy_OnLoad(f)
