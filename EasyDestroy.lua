@@ -13,7 +13,7 @@ local aname = ...
 	</Frame>
 	
 --]]
-local f = CreateFrame("Frame", "EasyDestroy")
+local f = CreateFrame("Frame", aname)
 VERSION = GetAddOnMetadata(aname, "Version");
 AddonNamePlain = "%s" .. aname .. "%s %sFixed%s";
 AddonName = string.format(AddonNamePlain, "|cffff00ff", "|r", "|cffff0000", "|r");
@@ -26,8 +26,8 @@ BINDING_NAME_EDNOTIFY				= "Enable or Disable Notifications";
 BINDING_NAME_EDCURSOR				= "Destroy what you just picked up";
 BINDING_NAME_EDCONVERT				= "Manually convert the old safe list";
 BINDING_NAME_EDSAFELIST				= "Show the safe list in the chat window";
-BINDING_NAME_EDSAFELISTADD			= "Add the cursor item to the save list";
-BINDING_NAME_EDSAFELISTREMOVE		= "Remove the cursor item from the save list";
+BINDING_NAME_EDSAFELISTADD			= "Add the cursor item to the safe list";
+BINDING_NAME_EDSAFELISTREMOVE		= "Remove the cursor item from the safe list";
 
 QUALITY_FLOOR = 2;
 
@@ -557,5 +557,19 @@ function EasyDestroy_GetQualityText(quality)
 		return "Unknown";
 	end
 end
+
+GameTooltip:HookScript("OnTooltipSetItem", function(self, ...)
+	local itemName, itemLink = self:GetItem()
+	local line = aname
+	for name in pairs(EasyDestroy_Safe) do
+		if name == itemName then
+			line = line .. ": this is in the safe list."
+		end
+	end
+	if line ~= aname then
+		self:AddLine(line)
+		self:Show()
+	end
+end)
 
 EasyDestroy_OnLoad(f)
