@@ -142,7 +142,11 @@ f:SetScript("OnEvent", function(self, event, ...)
 		if not IsKeyAlreadyBound("CTRL-R") then
 			SetBinding("CTRL-R", "EDSAFELISTREMOVE")
 		end
-		SaveBindings(GetCurrentBindingSet() or 1)
+		local CurrentBindingSet = GetCurrentBindingSet()
+		if CurrentBindingSet ~= 1 or CurrentBindingSet ~= 2 then
+		   CurrentBindingSet = 1
+		end
+		SaveBindings(CurrentBindingSet)
 	elseif ( event == "VARIABLES_LOADED" ) then
 		-- myAddOns support
 		EasyDestroyOptions.name = EasyDestroyOptions:GetName()
