@@ -1,4 +1,4 @@
-## Interface: 40000
+## Interface: 50001
 ## Title: EasyDestroy
 #@debug@
 ## Title: |cffff0088EBG|r EasyDestroy
