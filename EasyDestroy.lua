@@ -102,7 +102,7 @@ function EasyDestroy_OnLoad(self)
 	-- Slash Command Handler (added by Whizzbang)
 	SlashCmdList["EASYD"] = EasyDestroy_Cmd;
 	SLASH_EASYD1 = "/ed";
-	SLASH_EASYD2 = "/easydestory";
+	SLASH_EASYD2 = "/easydestroy";
 end
 
 local function IsKeyAlreadyBound_helper(key, command, ...)
