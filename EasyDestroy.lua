@@ -355,7 +355,7 @@ function EasyDestroy_Do_Item_Check(itemLink, qualityText, ...)
 	-- If the item's quality is >= 2 (Green or better), then we want to make sure they *really* want to delete this.
 	-- This is accomplished through making them do the procedure a second time within 5 seconds.
 
-	Print("|cffffffff["..AddonName.."] " .. itemLink .. " is " .. qualityText .. "!	Repeat the procedure to destroy it.|r");
+	Print("|cffffffff["..AddonName.."] " .. itemLink .. " is " .. qualityText .. "! Repeat the procedure to destroy it.|r");
 
 	LAST_ITEM_LINK = itemLink;
 	LAST_ITEM_BAG	= bag;
