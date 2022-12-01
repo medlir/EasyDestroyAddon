@@ -115,7 +115,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PlaySound("gsTitleOptionOK");
+						PlaySound(SOUNDKIT.GS_TITLE_OPTION_OK);
 						EasyDestroyOptions_Hide(self);
 					</OnClick>
 				</Scripts>
@@ -131,7 +131,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						PlaySound("igMainMenuOptionCheckBoxOn");
+						PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
 						EasyDestroyOptions_Defaults(self);
 					</OnClick>
 				</Scripts>
