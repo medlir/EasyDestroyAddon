@@ -571,8 +571,8 @@ function EasyDestroy_GetQualityText(quality)
 	end
 end
 
-GameTooltip:HookScript("OnTooltipSetItem", function(self, ...)
-	local itemName, itemLink = self:GetItem()
+local function OnTooltipSetItem(tooltip)
+	local itemName, itemLink = tooltip:GetItem()
 	local line = aname
 	for name in pairs(EasyDestroy_Safe) do
 		if name == itemName then
@@ -580,9 +580,19 @@ GameTooltip:HookScript("OnTooltipSetItem", function(self, ...)
 		end
 	end
 	if line ~= aname then
-		self:AddLine(line)
-		self:Show()
+		tooltip:AddLine(line)
+		tooltip:Show()
 	end
-end)
+end
+
+if TooltipDataProcessor then
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(self, ...)
+		if self == GameTooltip then
+			OnTooltipSetItem(self)
+		end
+	end)
+else
+	GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+end
 
 EasyDestroy_OnLoad(f)
