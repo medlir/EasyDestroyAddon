@@ -121,6 +121,12 @@ local function IsKeyAlreadyBound(key)
 	end
 end
 
+if not SaveBindings then
+	function SaveBindings(p)
+			AttemptToSaveBindings(p)
+	end
+end
+
 -- OnEvent functions, mainly to add myAddOns support
 f:SetScript("OnEvent", function(self, event, ...)
 	if event == "PLAYER_ENTERING_WORLD" then
