@@ -1,7 +1,7 @@
 <Bindings>
-    <Binding name="EDOPTIONS" description="Show EasyDestroy Option Frame" header="ED">
+	<Binding name="EDOPTIONS" description="Show EasyDestroy Option Frame" header="ED">
 		EasyDestroyOptions_Toggle();
-    </Binding>
+	</Binding>
 	<Binding name="EDNOTIFY">
 		if(EasyDestroy_Options.Notify) then
 			EasyDestroy_Options.Notify = false;

@@ -1,4 +1,5 @@
 local aname = ...
+
 -- Global Vars
 --[[
 	<Frame name="EasyDestroy" hidden="false">
@@ -11,8 +12,8 @@ local aname = ...
 			<OnEvent function="EasyDestroy_OnEvent" />
 		</Scripts>
 	</Frame>
-	
 --]]
+
 local f = CreateFrame("Frame", aname)
 VERSION = GetAddOnMetadata(aname, "Version");
 AddonNamePlain = "%s" .. aname .. "%s %sFixed%s";
@@ -38,7 +39,7 @@ LAST_ITEM_SLOT = nil;
 LAST_ITEM_LINK = nil;
 LAST_CONFIRM = 0;
 
-EasyDestroy_Options = { 
+EasyDestroy_Options = {
 	Notify = false;
 	On = true;
 	Converted = false;
@@ -59,20 +60,20 @@ function EasyDestroy_OnLoad(self)
 	if EasyDestroy_Options.Notify == nil then
 		EasyDestroy_Options.Notify = false;
 	end
-	
+
 	if EasyDestroy_Options.On == nil then
 		EasyDestroy_Options.On = true;
 	end
-	
+
 	if EasyDestroy_Options.Converted == nil then
 		EasyDestroy_Options.Converted = false;
 	end
-	
+
 	if EasyDestroy_Options.KeyBoardShortcuts == nil then
 		EasyDestroy_Options.KeyBoardShortcuts = true;
 	end
 	--
-	
+
 	UIErrorsFrame:AddMessage(aName.." version "..aVer.." loaded.");
 	if (not Print) then
 		Print = function (x, ...)
@@ -91,13 +92,13 @@ function EasyDestroy_OnLoad(self)
 	end
 
 	Print("|cffffffff["..AddonName.."] " .. VERSION .. " loaded.|r");
-	
+
 	UIPanelWindows[aname .. "Options"] = {area = "center", pushable = 0};
 
 	-- Events
 	self:RegisterEvent("VARIABLES_LOADED");
 	self:RegisterEvent("PLAYER_ENTERING_WORLD");
-	
+
 	-- Slash Command Handler (added by Whizzbang)
 	SlashCmdList["EASYD"] = EasyDestroy_Cmd;
 	SLASH_EASYD1 = "/ed";
@@ -195,7 +196,7 @@ function EasyDestroy_GetCmd(msg)
 		local a,b,c=strfind(msg, "(%S+)"); --contiguous string of non-space characters
 		if a then
 			return c, strsub(msg, b+2);
-		else	
+		else
 			return "";
 		end
 	end
@@ -303,7 +304,7 @@ function EasyDestroy_AddRemove(sub, cmd)
 	if (sub == nil) then
 		return false;
 	end
-	
+
 	local itemName, tempsub = GetItemInfo(sub);
 	if ( not itemName ) then
 		Print("|cffffffff["..AddonName.."] Could not find "..sub.."|r");
@@ -395,7 +396,7 @@ function EasyDestroy_DeleteCursorItem()
 					LAST_ITEM_BAG	= nil;
 					LAST_ITEM_SLOT = nil;
 					LAST_CONFIRM	 = 0;
-	
+
 					if(EasyDestroy_Options.Notify) then
 						Print("|cffffffff["..AddonName.."] |cff0000ffDestroyed|r - " .. itemLink .. ".|r");
 					end
@@ -405,19 +406,19 @@ function EasyDestroy_DeleteCursorItem()
 	end
 end
 
--- Generic function to allow either hooked function to destroy an item at <bag>,<slot>. 
-function EasyDestroy_DestroyItem(bag, slot)		
+-- Generic function to allow either hooked function to destroy an item at <bag>,<slot>.
+function EasyDestroy_DestroyItem(bag, slot)
 	if ( EasyDestroy_Options.On and IsAltKeyDown() and IsShiftKeyDown() ) then
 		local _, itemCount, _, _ = GetContainerItemInfo(bag, slot);
 		local itemLink = GetContainerItemLink(bag, slot);
-	
+
 		-- Normalize the itemName.
 		if not itemLink then
 			return
 		end
 		local itemName, _, quality = GetItemInfo(itemLink);
 		local qualityText = EasyDestroy_GetQualityText(quality);
-	
+
 		if (EasyDestroy_Safe[itemName]) then
 			Print("|cffffffff["..AddonName.."] " .. itemLink .. " is on your safe list! If you really want to destroy it, use the default method or remove it from your safe list first.|r");
 		else
@@ -429,7 +430,7 @@ function EasyDestroy_DestroyItem(bag, slot)
 				if (bag ~= -1 and slot ~= -1) then
 					PickupContainerItem(bag, slot);
 				end
-	
+
 				if ( CursorHasItem() ) then
 					-- Prevents me from deleting something important during testing.
 					if ( not EasyDestroy_Debug ) then
@@ -437,13 +438,13 @@ function EasyDestroy_DestroyItem(bag, slot)
 					else
 						Print("DEBUG : ITEM WOULD'VE BEEN DELETED!!!");
 					end
-				
+
 					-- It's really gone now.	Really.	No getting it back.
 					LAST_ITEM_LINK = nil;
 					LAST_ITEM_BAG	= nil;
 					LAST_ITEM_SLOT = nil;
 					LAST_CONFIRM	 = 0;
-	
+
 					if(EasyDestroy_Options.Notify) then
 						Print("|cffffffff["..AddonName.."] |cff0000ffDestroyed|r - " .. (( itemCount > 1 ) and itemCount .. "x " or "") .. itemLink .. ".|r");
 					end
