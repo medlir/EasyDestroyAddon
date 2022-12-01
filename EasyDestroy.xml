@@ -19,27 +19,16 @@
 		</Scripts>
 	</CheckButton>
 	
-	<Frame name="EasyDestroyOptions" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" hidden="true" parent="UIParent">
+	<Frame name="EasyDestroyOptions" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" hidden="true" parent="UIParent" inherits="BackdropTemplate">
 		<Size>
 			<AbsDimension x="225" y="200" />
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<BackgroundInsets>
-				<AbsInset left="11" right="12" top="12" bottom="11" />	
-				<Size>
-					<AbsDimension x="128" y="17" />
-				</Size>
-			</BackgroundInsets>
-			<TileSize>
-				<AbsValue val="32" />
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="32" />
-			</EdgeSize>
-		</Backdrop>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" type="global"/>
+		</KeyValues>
 		<Layers>
 			<Layer level="ARTWORK">
 				<Texture name="EasyDestroyOptionsFrameTitle" file="Interface\DialogFrame\UI-DialogBox-Header">
@@ -105,7 +94,7 @@
 				</Anchors>
 			</Frame>
 					
-			<Button name="EasyDestroyOptionsClose" inherits="OptionsButtonTemplate" text="Close">
+			<Button name="EasyDestroyOptionsClose" inherits="UIPanelButtonTemplate" text="Close">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="BOTTOM" relativeTo="EasyDestroyOptions">
 						<Offset>
@@ -121,7 +110,7 @@
 				</Scripts>
 			</Button>
 			
-			<Button name="EasyDestroyOptionsReset" inherits="OptionsButtonTemplate" text="Defaults">
+			<Button name="EasyDestroyOptionsReset" inherits="UIPanelButtonTemplate" text="Defaults">
 				<Anchors>
 					<Anchor point="CENTER" relativePoint="BOTTOM" relativeTo="EasyDestroyOptions">
 						<Offset>
